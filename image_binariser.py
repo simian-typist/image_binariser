@@ -13,14 +13,17 @@ def get_new_sizes(height, width, new_width):
     return int(new_height), new_width
 
 
-def make_ridiculous_image(binary, height, width):
+def make_ridiculous_image(binary, height, width, small):
     new_img = np.zeros((height*8, width*8, 3))
     for i in range(0, height):
         for j in range(0, width):
+            col = (int(small[i, j, 0]), int(small[i, j, 1]), int(small[i, j, 2]))
             if binary[i, j] == 0:
-                cv2.putText(new_img, "0", (j*8, i*8), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (255, 255, 255), 1)
+                cv2.putText(new_img, "0", (j*8, i*8), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.35, col, 1)
             elif binary[i, j] == 255:
-                cv2.putText(new_img, "1", (j*8, i*8), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (255, 255, 255), 1)
+                cv2.putText(new_img, "1", (j*8, i*8), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.35, col, 1)
     return new_img
 
 
@@ -31,8 +34,9 @@ def main():
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, (width, height))
+    small = cv2.resize(img, (width, height))
     _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-    new_img = make_ridiculous_image(binary, height, width)
+    new_img = make_ridiculous_image(binary, height, width, small)
     cv2.namedWindow("test")
 
     while True:
